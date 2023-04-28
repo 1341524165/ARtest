@@ -15,11 +15,7 @@
 <body style="margin: 0px; overflow: hidden">
   <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
     <a-marker preset="custom" type="pattern" url="./pattern-F.patt">
-      <a-entity
-        position="0 0 0"
-        scale="0.05 0.05 0.05"
-        gltf-model="url('./cubes_01.gltf')"
-      ></a-entity>
+      <a-box position="0 0.5 0" material="color: yellow;"></a-box>
     </a-marker>
 
     <a-entity camera></a-entity>
