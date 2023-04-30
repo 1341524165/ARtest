@@ -8,12 +8,8 @@
     content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
   />
 
-  <!-- Include required libraries -->
   <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
   <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.6.0/aframe/build/aframe-ar.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection"></script>
 
   <style>
     button {
@@ -27,13 +23,15 @@
 
 <body style="margin: 0px; overflow: hidden">
   <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-    <a-entity
-      position="0 0 0"
-      scale="0.03 0.03 0.03"
-      gltf-model="https://raw.githubusercontent.com/1341524165/ARtest/main/cubes_01.gltf"
-      id="model"
-      rotation="0 45 0"
-    ></a-entity>
+    <a-marker preset="custom" type="pattern" url="./pattern-F.patt">
+      <a-entity
+        position="0 0 0"
+        scale="0.03 0.03 0.03"
+        gltf-model="https://raw.githubusercontent.com/1341524165/ARtest/main/cubes_01.gltf"
+        id="model"
+        rotation="0 90 -45"
+      ></a-entity>
+    </a-marker>
 
     <a-entity camera></a-entity>
   </a-scene>
@@ -48,61 +46,19 @@
 
     var currentModelIndex = 0;
     var modelEntity = document.getElementById("model");
-    var faceDetectionModel = null;
 
-    // 加载Face-API.js模型
-    async function loadFaceDetectionModel() {
-      await tf.setBackend("webgl");
-      await faceLandmarksDetection.load(
-        faceLandmarksDetection.SupportedPackages.mediapipeFacemesh,
-        { maxFaces: 1 }
-      );
-    }
-
-    // 人脸检测和AR模型更新循环
-    async function detectFaceAndUpdateModel() {
-      const video = document.querySelector("video");
-      const predictions = await faceDetectionModel.estimateFaces({
-        input: video,
-      });
-
-      if (predictions.length > 0) {
-        const face = predictions[0].scaledMesh;
-        const boundingBox = predictions[0].boundingBox;
-        const x = boundingBox.topLeft[0];
-        const y = boundingBox.topLeft[1];
-        const width = boundingBox.bottomRight[0] - x;
-        const height = boundingBox.bottomRight[1] - y;
-        const centerX = x + width / 2;
-        const centerY = y + height / 2;
-
-        // 更新AR模型的位置和朝向
-        modelEntity.setAttribute("position", `${centerX} ${-centerY} -2`);
-        modelEntity.setAttribute("rotation", "0 45 0");
-      }
-
-      // 递归调用检测函数以实现持续更新
-      requestAnimationFrame(detectFaceAndUpdateModel);
-    }
-
-    // 切换AR模型
     function changeModel() {
       currentModelIndex = (currentModelIndex + 1) % models.length;
       modelEntity.setAttribute("gltf-model", models[currentModelIndex]);
+
+      if (currentModelIndex === 0) {
+        // 当切换到cubes_01.gltf模型时，将其缩放比例设置为0.03
+        modelEntity.setAttribute("scale", "0.03 0.03 0.03");
+      }
+      if (currentModelIndex === 1) {
+        // 当切换到freecar.gtlf模型时，将其缩放比例设置为0.3
+        modelEntity.setAttribute("scale", "0.3 0.3 0.3");
+      }
     }
-
-    // 初始化函数
-    async function init() {
-      await loadFaceDetectionModel();
-      await navigator.mediaDevices.getUserMedia({ video: true });
-
-      faceDetectionModel = faceLandmarksDetection.createDetector();
-
-      // 启动人脸检测和AR模型更新循环
-      detectFaceAndUpdateModel();
-    }
-
-    // 页面加载完成后调用初始化函数
-    window.onload = init;
   </script>
 </body>
