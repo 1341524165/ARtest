@@ -19,9 +19,28 @@
         position="0 0 0"
         scale="0.03 0.03 0.03"
         gltf-model="https://raw.githubusercontent.com/1341524165/ARtest/main/cubes_01.gltf"
+        id="model"
       ></a-entity>
     </a-marker>
 
     <a-entity camera></a-entity>
   </a-scene>
+
+  <button onclick="changeModel()">切换模型</button>
+
+  <script>
+    var models = [
+      "https://raw.githubusercontent.com/1341524165/ARtest/main/cubes_01.gltf",
+      "https://raw.githubusercontent.com/1341524165/ARtest/main/cubes_02.gltf",
+      "https://raw.githubusercontent.com/1341524165/ARtest/main/cubes_03.gltf",
+    ];
+
+    var currentModelIndex = 0;
+    var modelEntity = document.getElementById("model");
+
+    function changeModel() {
+      currentModelIndex = (currentModelIndex + 1) % models.length;
+      modelEntity.setAttribute("gltf-model", models[currentModelIndex]);
+    }
+  </script>
 </body>
