@@ -29,6 +29,7 @@
         scale="0.03 0.03 0.03"
         gltf-model="https://raw.githubusercontent.com/1341524165/ARtest/main/cubes_01.gltf"
         id="model"
+        rotation="0 45 0"
       ></a-entity>
     </a-marker>
 
@@ -49,6 +50,11 @@
     function changeModel() {
       currentModelIndex = (currentModelIndex + 1) % models.length;
       modelEntity.setAttribute("gltf-model", models[currentModelIndex]);
+
+      if (currentModelIndex === 1) {
+        // 当切换到freecar.gtlf模型时，将其缩放比例设置为0.3
+        modelEntity.setAttribute("scale", "0.3 0.3 0.3");
+      }
     }
   </script>
 </body>
